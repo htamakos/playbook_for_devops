@@ -1,0 +1,44 @@
+---
+- name: users exist
+  user:
+    name: "{{item.name}}"
+    state: present
+    password: "{{item.password}}"
+    group: "{{item.groups}}"
+  with_items: "{{users}}"
+  become: true
+  tags: users
+
+- name: ~/.ssh for users
+  file:
+    path: "/home/{{item.name}}/.ssh"
+    state: directory
+    owner: "{{item.name}}"
+    group: "{{item.groups}}"
+    mode: 0700
+  with_items: "{{users}}"
+  become: true
+  tags: users
+
+- name: authorized keys is deployed
+  copy:
+    src: "authorized_keys_for_{{item.name}}"
+    dest: "/home/{{item.name}}/.ssh/authorized_keys"
+    owner: "{{item.name}}"
+    group: "{{item.groups}}"
+    mode: 0600
+  with_items: "{{users}}"
+  become: true
+  tags: users
+
+- name: sudo config
+  copy:
+    src: "sudoers"
+    dest: "/etc/sudoers"
+    owner: root
+    group: root
+    mode: 0440
+  with_items: "{{users}}"
+  become: true
+  tags: users
+

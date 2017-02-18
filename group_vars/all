@@ -1,0 +1,3 @@
+users:
+  - { name: "swift", password: "$1$7bowXrlb$zGgwrt6DhK6EHa31a9dIg/", groups: "wheel" }
+
